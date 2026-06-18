@@ -1,0 +1,26 @@
+- id: check-line-length
+  name: check-line-length
+  entry: cathaysia-line-length
+  language: python
+  files: \.(rs|ts|tsx)$
+
+- id: move-module-mod
+  name: move-module-mod
+  entry: cathaysia-move-module
+  language: python
+  files: \.rs$
+  pass_filenames: false
+
+- id: compact_workspace_deps
+  name: compact_workspace_deps
+  entry: cathaysia-compact-workspace-deps
+  language: python
+  files: Cargo.toml$
+  pass_filenames: false
+
+- id: full-qualify-log
+  name: full-qualify-log
+  entry: cathaysia-qualify-tracing-macros
+  language: python
+  files: \.rs$
+  pass_filenames: false
