@@ -1,25 +1,13 @@
-"""Move Rust sibling module files into their module directories."""
+"""Move passed Rust sibling module files into their module directories."""
 
 from __future__ import annotations
 
 import argparse
-import os
 import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
-
-DEFAULT_EXCLUDE_DIRS = frozenset(
-    (
-        ".antigravitycli",
-        ".gemini",
-        ".git",
-        ".plan",
-        ".pre-commit",
-        "target",
-    )
-)
 
 
 @dataclass(frozen=True)
@@ -30,23 +18,35 @@ class ModuleMove:
     target: Path
 
 
-def find_module_moves(root: Path) -> list[ModuleMove]:
-    """Return sibling module files that should move into module directories."""
+def module_move_for_file(path: Path) -> ModuleMove | None:
+    """Return the module move for a single Rust file, if one is needed."""
+    if path.suffix != ".rs" or path.name == "mod.rs" or not path.is_file():
+        return None
+
+    module_dir = path.with_suffix("")
+    if not module_dir.is_dir():
+        return None
+
+    try:
+        has_contents = any(module_dir.iterdir())
+    except OSError:
+        return None
+    if not has_contents:
+        return None
+
+    return ModuleMove(path, module_dir / "mod.rs")
+
+
+def find_module_moves(paths: Sequence[Path]) -> list[ModuleMove]:
+    """Return moves for the passed Rust files only."""
     moves = []
-    for current_root, dirs, _files in os.walk(root):
-        dirs[:] = [name for name in dirs if name not in DEFAULT_EXCLUDE_DIRS]
-        current = Path(current_root)
-        for directory in dirs:
-            dir_path = current / directory
-            try:
-                has_contents = any(dir_path.iterdir())
-            except OSError:
-                continue
-            if not has_contents:
-                continue
-            sibling = current / f"{directory}.rs"
-            if sibling.is_file():
-                moves.append(ModuleMove(sibling, dir_path / "mod.rs"))
+    seen = set()
+    for path in paths:
+        move = module_move_for_file(path)
+        if move is None or move in seen:
+            continue
+        moves.append(move)
+        seen.add(move)
     return moves
 
 
@@ -67,10 +67,10 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--root",
+        "paths",
+        nargs="*",
         type=Path,
-        default=Path.cwd(),
-        help="repository root to scan",
+        help="Rust files to inspect",
     )
     return parser.parse_args(argv)
 
@@ -78,8 +78,7 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the module mover."""
     args = parse_args(argv)
-    root = args.root.resolve()
-    moves = find_module_moves(root)
+    moves = find_module_moves(args.paths)
     moved = apply_moves(moves)
     blocked = len(moves) - moved
 

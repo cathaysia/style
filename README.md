@@ -9,7 +9,7 @@ Add the hook repository to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/cathaysia/style
-    rev: v0.1.2
+    rev: v0.1.3
     hooks:
       - id: check-line-length
       - id: move-module-mod
@@ -23,8 +23,8 @@ Hooks run from the consuming repository root.
 
 - `cathaysia-line-length`: fail when passed source files exceed the configured
   line limit.
-- `cathaysia-move-module`: move `module.rs` into `module/mod.rs` when both the
-  sibling file and non-empty module directory exist.
+- `cathaysia-move-module`: move passed `module.rs` files into `module/mod.rs`
+  when the matching non-empty module directory exists.
 - `cathaysia-compact-workspace-deps`: rewrite `name = { workspace = true }` to
   `name.workspace = true` in passed `Cargo.toml` files.
 - `cathaysia-qualify-tracing-macros`: rewrite bare Rust tracing macro calls to

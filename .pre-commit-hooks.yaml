@@ -9,7 +9,6 @@
   entry: cathaysia-move-module
   language: python
   files: \.rs$
-  pass_filenames: false
 
 - id: compact_workspace_deps
   name: compact_workspace_deps
