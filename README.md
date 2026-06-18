@@ -17,8 +17,7 @@ repos:
       - id: full-qualify-log
 ```
 
-Hooks run from the consuming repository root. Commands that scan files use the
-current working directory as the default root.
+Hooks run from the consuming repository root.
 
 ## Commands
 
@@ -27,9 +26,16 @@ current working directory as the default root.
 - `cathaysia-move-module`: move `module.rs` into `module/mod.rs` when both the
   sibling file and non-empty module directory exist.
 - `cathaysia-compact-workspace-deps`: rewrite `name = { workspace = true }` to
-  `name.workspace = true` in `Cargo.toml` files.
+  `name.workspace = true` in passed `Cargo.toml` files.
 - `cathaysia-qualify-tracing-macros`: rewrite bare Rust tracing macro calls to
   `tracing::macro!` and remove redundant macro imports.
+
+## Ast-grep Rules
+
+Rules live under `rules/` and are loaded by `sgconfig.yml`.
+
+- `rust-no-return`: convert an `if` block at the end of a Rust function to an
+  early return.
 
 ## Development
 

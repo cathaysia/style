@@ -15,8 +15,7 @@
   name: compact_workspace_deps
   entry: cathaysia-compact-workspace-deps
   language: python
-  files: Cargo.toml$
-  pass_filenames: false
+  files: (^|/)Cargo\.toml$
 
 - id: full-qualify-log
   name: full-qualify-log

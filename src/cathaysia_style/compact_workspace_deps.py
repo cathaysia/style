@@ -39,24 +39,15 @@ def process_file(path: Path, *, dry_run: bool = False) -> int:
     return changed
 
 
-def find_cargo_tomls(root: Path) -> list[Path]:
-    """Return all Cargo.toml files under root, excluding build metadata."""
-    return sorted(
-        path
-        for path in root.rglob("Cargo.toml")
-        if "target" not in path.parts and ".git" not in path.parts
-    )
-
-
 def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument(
-        "--root",
+        "paths",
+        nargs="*",
         type=Path,
-        default=Path.cwd(),
-        help="repository root to scan",
+        help="Cargo.toml files to rewrite",
     )
     return parser.parse_args(argv)
 
@@ -64,20 +55,18 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
 def main(argv: Sequence[str] | None = None) -> int:
     """Run the workspace dependency compactor."""
     args = parse_args(argv)
-    root = args.root.resolve()
-    tomls = find_cargo_tomls(root)
     total = 0
 
-    for path in tomls:
+    for path in args.paths:
         changed = process_file(path, dry_run=args.dry_run)
         if changed:
             tag = " (dry-run)" if args.dry_run else ""
-            print(f"  {path.relative_to(root)}: {changed} line(s) compacted{tag}")
+            print(f"  {path}: {changed} line(s) compacted{tag}")
             total += changed
 
     if total:
         verb = "Would compact" if args.dry_run else "Compacted"
-        print(f"\n{verb} {total} line(s) across {len(tomls)} file(s).")
+        print(f"\n{verb} {total} line(s) across {len(args.paths)} file(s).")
     else:
         print("Nothing to compact.")
     return 0

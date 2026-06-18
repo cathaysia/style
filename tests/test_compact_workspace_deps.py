@@ -1,8 +1,10 @@
+from contextlib import redirect_stdout
+from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
 
-from cathaysia_style.compact_workspace_deps import compact_line, find_cargo_tomls
+from cathaysia_style.compact_workspace_deps import compact_line, main
 
 
 class CompactWorkspaceDepsTests(unittest.TestCase):
@@ -16,14 +18,25 @@ class CompactWorkspaceDepsTests(unittest.TestCase):
         line = 'tokio = { workspace = true, features = ["rt"] }\n'
         self.assertEqual(compact_line(line), line)
 
-    def test_find_cargo_tomls_skips_target(self) -> None:
+    def test_main_only_processes_passed_files(self) -> None:
         with TemporaryDirectory() as temp:
             root = Path(temp)
-            (root / "Cargo.toml").write_text("", encoding="utf-8")
-            (root / "target").mkdir()
-            (root / "target" / "Cargo.toml").write_text("", encoding="utf-8")
+            selected = root / "Cargo.toml"
+            unpassed = root / "nested" / "Cargo.toml"
+            unpassed.parent.mkdir()
+            selected.write_text("tokio = { workspace = true }\n", encoding="utf-8")
+            unpassed.write_text("serde = { workspace = true }\n", encoding="utf-8")
 
-            self.assertEqual(find_cargo_tomls(root), [root / "Cargo.toml"])
+            with redirect_stdout(StringIO()):
+                self.assertEqual(main([str(selected)]), 0)
+            self.assertEqual(
+                selected.read_text(encoding="utf-8"),
+                "tokio.workspace = true\n",
+            )
+            self.assertEqual(
+                unpassed.read_text(encoding="utf-8"),
+                "serde = { workspace = true }\n",
+            )
 
 
 if __name__ == "__main__":

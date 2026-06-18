@@ -1,0 +1,23 @@
+id: rust-no-return
+message: "Convert if block at end of function to early return"
+severity: warning
+language: rust
+rule:
+  pattern:
+    strictness: cst
+    context: |
+      fn $FUNC($$$PARAMS) {
+        $$$BEFORE
+        if $COND {
+          $$$BODY
+        }
+      }
+
+fix: |
+  fn $FUNC($$$PARAMS) {
+    $$$BEFORE
+    if !($COND) {
+      return;
+    }
+    $$$BODY
+  }
