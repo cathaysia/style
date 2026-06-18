@@ -9,7 +9,7 @@ Add the hook repository to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/cathaysia/style
-    rev: v0.1.1
+    rev: v0.1.2
     hooks:
       - id: check-line-length
       - id: move-module-mod
