@@ -4,16 +4,20 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cathaysia-style"
-version = "0.1.5"
+version = "0.1.6"
 description = "Reusable style hooks for Cathaysia repositories."
 readme = "README.md"
 requires-python = ">=3.9"
 
 [project.scripts]
 cathaysia-compact-workspace-deps = "cathaysia_style.compact_workspace_deps:main"
+cathaysia-ast-grep = "cathaysia_style.ast_grep:main"
 cathaysia-line-length = "cathaysia_style.line_length:main"
 cathaysia-move-module = "cathaysia_style.move_module:main"
 cathaysia-qualify-tracing-macros = "cathaysia_style.qualify_tracing_macros:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+cathaysia_style = ["sgconfig.yml", "ast_grep_rules/*.yml"]

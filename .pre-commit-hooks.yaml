@@ -4,6 +4,14 @@
   language: python
   files: \.(rs|ts|tsx)$
 
+- id: ast-grep-rules
+  name: ast-grep-rules
+  entry: cathaysia-ast-grep
+  language: python
+  additional_dependencies:
+    - ast-grep-cli==0.44.0
+  files: \.rs$
+
 - id: move-module-mod
   name: move-module-mod
   entry: cathaysia-move-module
