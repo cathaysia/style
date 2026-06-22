@@ -30,3 +30,10 @@
   language: python
   files: \.rs$
   pass_filenames: false
+
+- id: github-workflows
+  name: github-workflows
+  entry: cathaysia-github-workflows
+  language: python
+  files: ^\.github/workflows/.*\.ya?ml$
+  pass_filenames: false

@@ -1,4 +1,4 @@
-name: CI
+name: ci
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   test:
-    name: test python ${{ matrix.python-version }}
+    name: test-python
     runs-on: ubuntu-latest
 
     strategy:
@@ -37,7 +37,7 @@ jobs:
         run: python -m unittest discover -s tests
 
   package:
-    name: build package
+    name: build-package
     runs-on: ubuntu-latest
 
     steps:

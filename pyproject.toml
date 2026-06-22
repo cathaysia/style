@@ -15,6 +15,7 @@ cathaysia-ast-grep = "cathaysia_style.ast_grep:main"
 cathaysia-line-length = "cathaysia_style.line_length:main"
 cathaysia-move-module = "cathaysia_style.move_module:main"
 cathaysia-qualify-tracing-macros = "cathaysia_style.qualify_tracing_macros:main"
+cathaysia-github-workflows = "cathaysia_style.github_workflows:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

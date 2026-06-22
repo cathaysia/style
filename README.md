@@ -16,6 +16,7 @@ repos:
       - id: move-module-mod
       - id: compact_workspace_deps
       - id: full-qualify-log
+      - id: github-workflows
 ```
 
 Hooks run from the consuming repository root.
@@ -31,6 +32,9 @@ Hooks run from the consuming repository root.
   `name.workspace = true` in passed `Cargo.toml` files.
 - `cathaysia-qualify-tracing-macros`: rewrite bare Rust tracing macro calls to
   `tracing::macro!` and remove redundant macro imports.
+- `cathaysia-github-workflows`: rename GitHub workflow `.yml` files to `.yaml`
+  and require lower kebab-case workflow file names, top-level workflow names,
+  job ids, and job names.
 
 ## Ast-grep Rules
 
