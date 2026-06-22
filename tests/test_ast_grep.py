@@ -12,6 +12,8 @@ class AstGrepTests(unittest.TestCase):
 
         self.assertEqual(Path(command[0]).name, "sg")
         self.assertEqual(command[1], "scan")
+        self.assertEqual(command[command.index("--color") + 1], "never")
+        self.assertEqual(command[command.index("--report-style") + 1], "short")
         self.assertIn("--update-all", command)
         self.assertIn("--error", command)
         self.assertEqual(command[-1], "src/lib.rs")
