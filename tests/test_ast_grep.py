@@ -1,4 +1,6 @@
 from pathlib import Path
+import shutil
+import subprocess
 from tempfile import TemporaryDirectory
 from unittest.mock import Mock, patch
 import unittest
@@ -46,6 +48,56 @@ class AstGrepTests(unittest.TestCase):
         self.assertEqual(command[-1], "src/lib.rs")
         self.assertEqual(run.call_args.kwargs["cwd"], Path.cwd())
         self.assertFalse(run.call_args.kwargs["check"])
+
+    @unittest.skipIf(shutil.which("ast-grep") is None, "ast-grep is not installed")
+    def test_rust_no_return_does_not_rewrite_if_let_conditions(self) -> None:
+        with TemporaryDirectory() as temp:
+            temp_path = Path(temp)
+            config = temp_path / "sgconfig.yml"
+            rule_dir = Path.cwd() / "src/cathaysia_style/ast_grep_rules"
+            config.write_text(f"ruleDirs:\n  - {rule_dir}\n")
+            sample = temp_path / "sample.rs"
+            sample.write_text(
+                """
+fn ok(flag: bool) {
+    if flag {
+        tracing::info!("x");
+    }
+}
+
+fn keep_if_let() {
+    if let Err(error) = self.restore() {
+        tracing::warn!("{:?}", error);
+    }
+}
+""".lstrip(),
+            )
+
+            completed = subprocess.run(
+                [
+                    "ast-grep",
+                    "scan",
+                    "--config",
+                    str(config),
+                    "--update-all",
+                    "--error",
+                    str(sample),
+                ],
+                cwd=Path.cwd(),
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            self.assertEqual(
+                completed.returncode,
+                0,
+                completed.stdout + completed.stderr,
+            )
+            rewritten = sample.read_text()
+            self.assertIn("if !(flag)", rewritten)
+            self.assertIn("if let Err(error) = self.restore()", rewritten)
+            self.assertNotIn("if !(let Err(error) = self.restore())", rewritten)
 
 
 if __name__ == "__main__":
