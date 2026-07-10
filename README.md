@@ -9,7 +9,7 @@ Add the hook repository to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/cathaysia/style
-    rev: v0.1.9
+    rev: v0.1.10
     hooks:
       - id: check-line-length
       - id: ast-grep-rules
@@ -17,9 +17,20 @@ repos:
       - id: compact_workspace_deps
       - id: full-qualify-log
       - id: github-workflows
+      - id: forbid-path-changes
+        args:
+          - |
+            path: generated/**, reason: use the generator instead
+          - |
+            path: fixtures/locked/*.json
 ```
 
 Hooks run from the consuming repository root.
+
+The `forbid-path-changes` hook accepts a list of rules. Each rule requires
+`path` and may include `reason`; fields may be separated by commas or newlines.
+Paths are relative to the repository root: `*` matches within one path segment
+and `**` matches across directories.
 
 ## Commands
 
@@ -35,6 +46,8 @@ Hooks run from the consuming repository root.
 - `cathaysia-github-workflows`: rename GitHub workflow `.yml` files to `.yaml`
   and require lower kebab-case workflow file names, top-level workflow names,
   job ids, and job names.
+- `cathaysia-forbid-path-changes`: fail when a passed changed path matches any
+  protected path rule.
 
 ## Ast-grep Rules
 

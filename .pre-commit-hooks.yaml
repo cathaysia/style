@@ -37,3 +37,8 @@
   language: python
   files: ^\.github/workflows/.*\.ya?ml$
   pass_filenames: false
+
+- id: forbid-path-changes
+  name: forbid-path-changes
+  entry: cathaysia-forbid-path-changes
+  language: python
