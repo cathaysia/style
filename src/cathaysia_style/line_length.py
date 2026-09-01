@@ -64,6 +64,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"'{violation.path}' has {violation.line_count} lines, "
             f"which exceeds the maximum limit of {violation.max_lines} lines."
         )
+        print(
+            "Hint: To resolve this, split the file into smaller submodules. "
+            "Do NOT work around the limit by compressing blank lines, "
+            "collapsing code onto a single line, or instructing the formatter to skip "
+            "sections (e.g. adding #[rustfmt::skip] to squeeze a function onto one line)."
+        )
     return 1 if violations else 0
 
 
