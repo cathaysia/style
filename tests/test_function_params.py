@@ -40,6 +40,20 @@ class FunctionParamsTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             function_params.build_rule(-1)
 
+    def test_find_ast_grep_ignores_system_sg(self) -> None:
+        with patch(
+            "cathaysia_style.function_params.shutil.which",
+            side_effect=lambda name: "/usr/bin/sg" if name == "sg" else None,
+        ), patch(
+            "cathaysia_style.function_params.Path.is_file",
+            return_value=False,
+        ), patch(
+            "cathaysia_style.function_params.subprocess.run",
+            side_effect=FileNotFoundError,
+        ):
+            self.assertIsNone(function_params.find_ast_grep())
+            self.assertEqual(function_params.ast_grep_executable(), "ast-grep")
+
     def test_command_structure(self) -> None:
         rule_file = Path("/tmp/rule.yml")
         files = [Path("src/a.rs"), Path("src/b.rs")]
@@ -102,7 +116,7 @@ class FunctionParamsTests(unittest.TestCase):
             self.assertIn("not found. Please install ast-grep", output.getvalue())
 
     @unittest.skipIf(
-        shutil.which("ast-grep") is None and shutil.which("sg") is None,
+        function_params.find_ast_grep() is None,
         "ast-grep is not installed",
     )
     def test_integration_detects_too_many_parameters(self) -> None:
@@ -136,7 +150,7 @@ trait Bar {
             self.assertEqual(exit_code, 1)
 
     @unittest.skipIf(
-        shutil.which("ast-grep") is None and shutil.which("sg") is None,
+        function_params.find_ast_grep() is None,
         "ast-grep is not installed",
     )
     def test_integration_passes_when_within_limits(self) -> None:
@@ -161,7 +175,7 @@ impl Foo {
             self.assertEqual(exit_code, 0)
 
     @unittest.skipIf(
-        shutil.which("ast-grep") is None and shutil.which("sg") is None,
+        function_params.find_ast_grep() is None,
         "ast-grep is not installed",
     )
     def test_integration_custom_limit(self) -> None:

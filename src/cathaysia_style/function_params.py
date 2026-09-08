@@ -13,19 +13,39 @@ from typing import Sequence
 DEFAULT_MAX_PARAMS = 4
 
 
-def ast_grep_executable() -> str:
-    """Find the ast-grep executable ('sg' or 'ast-grep')."""
-    for name in ("sg", "ast-grep"):
-        executable = shutil.which(name)
-        if executable is not None:
-            return executable
+def find_ast_grep() -> str | None:
+    """Find the ast-grep executable ('ast-grep' or 'sg')."""
+    executable = shutil.which("ast-grep")
+    if executable is not None:
+        return executable
 
-    for name in ("sg", "ast-grep"):
+    for name in ("ast-grep", "sg"):
         sibling = Path(sys.executable).with_name(name)
         if sibling.is_file():
             return str(sibling)
 
-    return "sg"
+    executable = shutil.which("sg")
+    if executable is not None:
+        if Path(executable).resolve() not in (Path("/usr/bin/sg"), Path("/bin/sg")):
+            return executable
+        try:
+            out = subprocess.run(
+                [executable, "--version"],
+                capture_output=True,
+                text=True,
+                timeout=2,
+            )
+            if "ast-grep" in out.stdout:
+                return executable
+        except (subprocess.SubprocessError, OSError):
+            pass
+
+    return None
+
+
+def ast_grep_executable() -> str:
+    """Return ast-grep executable path or default to 'ast-grep'."""
+    return find_ast_grep() or "ast-grep"
 
 
 def build_rule(max_params: int) -> str:
