@@ -17,6 +17,7 @@ cathaysia-move-module = "cathaysia_style.move_module:main"
 cathaysia-qualify-tracing-macros = "cathaysia_style.qualify_tracing_macros:main"
 cathaysia-github-workflows = "cathaysia_style.github_workflows:main"
 cathaysia-forbid-path-changes = "cathaysia_style.forbid_path_changes:main"
+cathaysia-function-params = "cathaysia_style.function_params:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

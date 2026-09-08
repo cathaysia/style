@@ -17,6 +17,8 @@ repos:
       - id: compact_workspace_deps
       - id: full-qualify-log
       - id: github-workflows
+      - id: check-function-params
+        args: [--max-params, "4"]
       - id: forbid-path-changes
         args:
           - |
@@ -48,6 +50,8 @@ and `**` matches across directories.
   job ids, and job names.
 - `cathaysia-forbid-path-changes`: fail when a passed changed path matches any
   protected path rule.
+- `cathaysia-function-params`: fail when functions exceed the maximum allowed
+  parameter count (default: 4).
 
 ## Ast-grep Rules
 

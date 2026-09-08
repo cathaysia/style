@@ -42,3 +42,11 @@
   name: forbid-path-changes
   entry: cathaysia-forbid-path-changes
   language: python
+
+- id: check-function-params
+  name: check-function-params
+  entry: cathaysia-function-params
+  language: python
+  additional_dependencies:
+    - ast-grep-cli==0.44.0
+  files: \.rs$
