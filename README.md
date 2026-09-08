@@ -9,7 +9,7 @@ Add the hook repository to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/cathaysia/style
-    rev: v0.1.10
+    rev: v0.1.12
     hooks:
       - id: check-line-length
       - id: ast-grep-rules
