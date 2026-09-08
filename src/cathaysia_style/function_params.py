@@ -33,7 +33,9 @@ def find_ast_grep() -> str | None:
                 text=True,
                 timeout=2,
             )
-            if "ast-grep" in (out.stdout + out.stderr):
+            stdout = out.stdout if isinstance(getattr(out, "stdout", None), str) else ""
+            stderr = out.stderr if isinstance(getattr(out, "stderr", None), str) else ""
+            if "ast-grep" in (stdout + stderr):
                 return executable
         except (subprocess.SubprocessError, OSError):
             pass

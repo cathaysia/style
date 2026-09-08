@@ -77,12 +77,14 @@ class FunctionParamsTests(unittest.TestCase):
             test_file = Path(temp) / "test.rs"
             test_file.write_text("fn ok() {}\n")
 
-            completed = Mock(returncode=0)
-            with patch("cathaysia_style.function_params.subprocess.run", return_value=completed) as run:
+            completed = Mock(returncode=0, stdout="", stderr="")
+            with patch("cathaysia_style.function_params.subprocess.run", return_value=completed) as run, \
+                    patch("cathaysia_style.function_params.ast_grep_executable", return_value="ast-grep"):
                 exit_code = function_params.main([str(test_file)])
 
             self.assertEqual(exit_code, 0)
             cmd = run.call_args.args[0]
+            self.assertEqual(cmd[0], "ast-grep")
             self.assertEqual(cmd[1], "scan")
             self.assertIn("--rule", cmd)
             self.assertEqual(cmd[-1], str(test_file))
@@ -92,9 +94,10 @@ class FunctionParamsTests(unittest.TestCase):
             test_file = Path(temp) / "test.rs"
             test_file.write_text("fn too_many(a: i32, b: i32, c: i32, d: i32, e: i32) {}\n")
 
-            completed = Mock(returncode=1)
+            completed = Mock(returncode=1, stdout="", stderr="")
             output = StringIO()
             with patch("cathaysia_style.function_params.subprocess.run", return_value=completed), \
+                    patch("cathaysia_style.function_params.ast_grep_executable", return_value="ast-grep"), \
                     redirect_stdout(output):
                 exit_code = function_params.main([str(test_file)])
 
