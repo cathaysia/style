@@ -26,8 +26,6 @@ def find_ast_grep() -> str | None:
 
     executable = shutil.which("sg")
     if executable is not None:
-        if Path(executable).resolve() not in (Path("/usr/bin/sg"), Path("/bin/sg")):
-            return executable
         try:
             out = subprocess.run(
                 [executable, "--version"],
@@ -35,7 +33,7 @@ def find_ast_grep() -> str | None:
                 text=True,
                 timeout=2,
             )
-            if "ast-grep" in out.stdout:
+            if "ast-grep" in (out.stdout + out.stderr):
                 return executable
         except (subprocess.SubprocessError, OSError):
             pass

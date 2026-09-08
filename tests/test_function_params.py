@@ -41,6 +41,7 @@ class FunctionParamsTests(unittest.TestCase):
             function_params.build_rule(-1)
 
     def test_find_ast_grep_ignores_system_sg(self) -> None:
+        completed = Mock(stdout="invalid option\n", stderr="")
         with patch(
             "cathaysia_style.function_params.shutil.which",
             side_effect=lambda name: "/usr/bin/sg" if name == "sg" else None,
@@ -49,7 +50,7 @@ class FunctionParamsTests(unittest.TestCase):
             return_value=False,
         ), patch(
             "cathaysia_style.function_params.subprocess.run",
-            side_effect=FileNotFoundError,
+            return_value=completed,
         ):
             self.assertIsNone(function_params.find_ast_grep())
             self.assertEqual(function_params.ast_grep_executable(), "ast-grep")
