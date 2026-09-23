@@ -50,3 +50,10 @@
   additional_dependencies:
     - ast-grep-cli==0.44.0
   files: \.rs$
+
+- id: check-linear-history
+  name: check-linear-history
+  entry: cathaysia-linear-history
+  language: python
+  pass_filenames: false
+  always_run: true

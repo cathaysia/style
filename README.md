@@ -9,7 +9,7 @@ Add the hook repository to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/cathaysia/style
-    rev: v0.1.12
+    rev: v0.1.13
     hooks:
       - id: check-line-length
       - id: ast-grep-rules
@@ -25,6 +25,7 @@ repos:
             path: generated/**, reason: use the generator instead
           - |
             path: fixtures/locked/*.json
+      - id: check-linear-history
 ```
 
 Hooks run from the consuming repository root.
@@ -52,6 +53,8 @@ and `**` matches across directories.
   protected path rule.
 - `cathaysia-function-params`: fail when functions exceed the maximum allowed
   parameter count (default: 4).
+- `cathaysia-linear-history`: fail when git commit history is not linear
+  (contains merge commits) or when a merge is in progress.
 
 ## Ast-grep Rules
 
