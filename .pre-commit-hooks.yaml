@@ -43,6 +43,11 @@
   entry: cathaysia-forbid-path-changes
   language: python
 
+- id: forbid-absolute-paths
+  name: forbid-absolute-paths
+  entry: cathaysia-forbid-absolute-paths
+  language: python
+
 - id: check-function-params
   name: check-function-params
   entry: cathaysia-function-params

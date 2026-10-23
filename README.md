@@ -19,6 +19,7 @@ repos:
       - id: github-workflows
       - id: check-function-params
         args: [--max-params, "4"]
+      - id: forbid-absolute-paths
       - id: forbid-path-changes
         args:
           - |
@@ -51,6 +52,15 @@ and `**` matches across directories.
   job ids, and job names.
 - `cathaysia-forbid-path-changes`: fail when a passed changed path matches any
   protected path rule.
+- `cathaysia-forbid-absolute-paths`: fail when a passed file contains a
+  host-specific absolute path, regardless of file type. This covers POSIX home,
+  mount, temporary, and package-prefix paths (for example `/home/alice`,
+  `/Users/alice`, `/mnt/data`, `/tmp/build`, `/opt/homebrew`) as well as Windows
+  drive paths (`C:\Users\alice`) and UNC paths (`\\server\share`). URLs,
+  relative paths, route paths, and portable system paths such as
+  `/usr/bin/env`, `/etc/hosts`, and `/dev/null` are not reported. Add more
+  roots with repeatable `--root` arguments, for example
+  `args: [--root, /data]`.
 - `cathaysia-function-params`: fail when functions exceed the maximum allowed
   parameter count (default: 4).
 - `cathaysia-linear-history`: fail when git commit history is not linear
